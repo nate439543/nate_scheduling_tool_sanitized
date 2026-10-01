@@ -25,7 +25,7 @@ The app is a [NiceGUI](https://nicegui.io/) desktop window (backed by
 The GUI is organized into three tabs, each wrapping one or more scripts:
 
 ### Build
-![alt text](https://github.com/nate439543/nate_scheduling_tool_sanitized/tree/main/Extra/README_Images/analyze_tab.png "Build Tab")
+![alt text]([https://github.com/nate439543/nate_scheduling_tool_sanitized/tree/main/Extra/README_Images/analyze_tab.png] "Build Tab")
 - **Build P6 Update Sheets**  — pulls P6 export data and generates the per-project
   weekly update Excel workbooks for the given data date range.
 - Shortcuts to open the fragnet template, the P6 data source file, the
