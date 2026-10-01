@@ -58,26 +58,6 @@ The GUI is organized into three tabs, each wrapping one or more scripts:
 - Shortcuts to the OFCI Updater, Auto Updater, and import/publish-input
   folders.
 
-## Project layout
-
-```
-app/
-  nate_scheduling_tool_gui.py      # NiceGUI desktop app / entry point
-  build_p6_update_sheets/          # Build weekly update workbooks from P6 data
-  collect_updates_to_import_file/  # Collect OFCI/weekly/auto-updater rows into an import file
-  get_update_data/                 # Pull comments/progress into the analysis workbook
-  reorganize_to_onedrive/          # Rename + publish schedule files to OneDrive/Procore
-  sched_update_file_org/           # Generate schedule publish nomenclature
-  frag_logger/                     # Log fragnet entries to the fragnet log
-  excel_logic/                     # Excel read/write helpers (openpyxl + COM)
-  onedrive_logic/                  # File copy helpers for OneDrive-synced folders
-  file_manipulation_logic/         # Generic file copy/rename helpers
-  utilities/                       # Config loading, date math, timestamped printing
-Excel Files/                       # Templates, nomenclature, and import/publish staging folders
-config.ini                         # All paths, file-naming templates, and per-project settings
-setup.bat                          # Creates .venv and installs requirements.txt
-Nate's Scheduling Tool.bat          # Launches the GUI
-```
 
 ## Configuration
 
@@ -99,9 +79,6 @@ Everything project- and path-specific lives in `config.ini`, including:
 - `[Fragnets Details]` / `[Frag Sheet Ranges]` / `[Frag Log Ranges]` — paths
   and cell ranges for fragnet logging.
 
-Filename templates support placeholders like `{date_slashes}`, `{date_dots}`,
-`{date_dashes}`, `{date_swaped}`, `{date_underscores_yearfirst}`, and
-`{data_date}`, which are filled in from the date(s) entered in the GUI.
 
 Config is loaded via `app/utilities/get_config.py`, which parses `config.ini`
 into a typed `ConfigOutput` dataclass and resolves all path placeholders.
@@ -113,8 +90,3 @@ into a typed `ConfigOutput` dataclass and resolves all path placeholders.
 - See `requirements.txt` for Python dependencies (`nicegui`, `pywebview`,
   `openpyxl`, `pywin32`, `pandas`, `msal`, `requests`).
 
-## Notes
-
-This is a personal automation tool tailored to a specific project's file
-naming conventions and OneDrive/SharePoint folder layout (see `config.ini`),
-not a general-purpose scheduling library.
