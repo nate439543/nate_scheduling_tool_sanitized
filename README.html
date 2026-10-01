@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nate's Scheduling Tool — Read Me</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #1c1c1c;
+    --muted: #5b6570;
+    --border: #dfe3e8;
+    --code-bg: #f2f4f7;
+    --accent: #0d474a;
+    --accent-bg: #eaf3f3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16191c;
+      --text: #e8eaed;
+      --muted: #9aa4af;
+      --border: #33393f;
+      --code-bg: #21262c;
+      --accent: #7fc8c8;
+      --accent-bg: #1b2c2c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  h1 {
+    margin: 0 0 6px;
+    font-size: 1.9rem;
+  }
+  .subtitle {
+    color: var(--muted);
+    margin: 0 0 32px;
+    font-size: 1rem;
+  }
+  h2 {
+    margin-top: 2.4em;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    font-size: 1.35rem;
+  }
+  h3 {
+    margin-top: 1.6em;
+    color: var(--accent);
+    font-size: 1.05rem;
+  }
+  p, li { font-size: 0.98rem; }
+  ul, ol { padding-left: 1.4em; }
+  li { margin: 0.35em 0; }
+  code {
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 0.9em;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+    white-space: pre;
+  }
+  a { color: var(--accent); }
+  .callout {
+    background: var(--accent-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 1.4em 0;
+    font-size: 0.95rem;
+  }
+  .step {
+    margin: 0.6em 0;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 0.92rem;
+  }
+  th { background: var(--code-bg); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Nate's Scheduling Tool</h1>
+  <p class="subtitle">Read me — plain HTML version, opens in any browser.</p>
+
+  <p>
+    A Windows desktop app that automates Nate's weekly Primavera P6 schedule
+    update workflow: building update-input Excel workbooks from P6 data,
+    collecting completed updates back into an import file, analyzing update
+    progress, and publishing/renaming finished schedule files out to
+    OneDrive/SharePoint and Procore.
+  </p>
+
+  <p>
+    The app is a <a href="https://nicegui.io/" target="_blank" rel="noopener">NiceGUI</a>
+    desktop window (backed by <code>pywebview</code>) that drives Excel over
+    COM automation (<code>pywin32</code>) and <code>openpyxl</code>, so it
+    requires Windows with Excel installed.
+  </p>
+
+  <h2>Quick start</h2>
+  <ol>
+    <li class="step">Install <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">Python 3.13</a>
+      (check "Add Python to PATH" during install).</li>
+    <li class="step">Run <code>setup.bat</code> — creates a <code>.venv</code> virtual
+      environment and installs dependencies from <code>requirements.txt</code>.</li>
+    <li class="step">Edit <code>config.ini</code> with your paths, project list, and
+      file naming conventions (see <a href="#configuration">Configuration</a>).</li>
+    <li class="step">Launch the app with <code>Nate's Scheduling Tool.bat</code>
+      (or the <code>.lnk</code> shortcut).</li>
+  </ol>
+
+  <h2>What it does</h2>
+  <p>
+    The GUI is organized into three tabs, each wrapping one or more scripts:
+  </p>
+
+  <h3>Build</h3>
+  <ul>
+    <li><strong>Build P6 Update Sheets</strong> — pulls P6 export data and
+      generates the per-project weekly update Excel workbooks for the given
+      data date range.</li>
+    <li>Shortcuts to open the fragnet template, the P6 data source file, the
+      output folder, and the update template.</li>
+  </ul>
+
+  <h3>Analyze</h3>
+  <ul>
+    <li><strong>Grab Update Data For Analysis</strong> — Pulls comments/user
+      input data from each project's published update sheet into a source
+      file which is connected to any reports/analysis files via Power
+      Query.</li>
+    <li>Shortcuts to open the activities-riding-date, update analysis, and
+      comment analysis workbooks.</li>
+  </ul>
+
+  <h3>Process</h3>
+  <ul>
+    <li><strong>Generate Import Files for Current Updates</strong> — Collects
+      weekly updates from OFCI, Weekly Update, and Auto Updater excel files.
+      Converts this data into excel files for each project which can be
+      directly imported into P6.</li>
+    <li><strong>Generate Publish Nomenclature</strong> — builds the
+      baseline/schedule ID/schedule name lookup spreadsheet used when
+      publishing schedules for a given data date.</li>
+    <li><strong>Move and Rename Publish Files</strong> — matches files
+      dropped in the publish input folder against <code>config.ini</code>'s
+      schedule name map, renames/copies them, and pushes them out to the
+      SharePoint and Procore OneDrive folders (with project-specific routing
+      rules).</li>
+    <li>Shortcuts to the OFCI Updater, Auto Updater, and import/publish-input
+      folders.</li>
+  </ul>
+
+  <h2>Project layout</h2>
+<pre><code>app/
+  nate_scheduling_tool_gui.py      # NiceGUI desktop app / entry point
+  build_p6_update_sheets/          # Build weekly update workbooks from P6 data
+  collect_updates_to_import_file/  # Collect OFCI/weekly/auto-updater rows into an import file
+  get_update_data/                 # Pull comments/progress into the analysis workbook
+  reorganize_to_onedrive/          # Rename + publish schedule files to OneDrive/Procore
+  sched_update_file_org/           # Generate schedule publish nomenclature
+  frag_logger/                     # Log fragnet entries to the fragnet log
+  excel_logic/                     # Excel read/write helpers (openpyxl + COM)
+  onedrive_logic/                  # File copy helpers for OneDrive-synced folders
+  file_manipulation_logic/         # Generic file copy/rename helpers
+  utilities/                       # Config loading, date math, timestamped printing
+Excel Files/                       # Templates, nomenclature, and import/publish staging folders
+config.ini                         # All paths, file-naming templates, and per-project settings
+setup.bat                          # Creates .venv and installs requirements.txt
+Nate's Scheduling Tool.bat          # Launches the GUI
+</code></pre>
+
+  <h2 id="configuration">Configuration</h2>
+  <p>Everything project- and path-specific lives in <code>config.ini</code>, including:</p>
+  <ul>
+    <li><code>[Update Sheet Names]</code> — project code → update workbook file name template.</li>
+    <li><code>[Excel File Paths]</code> / <code>[Publish Output Paths]</code> /
+      <code>[details]</code> — local and OneDrive paths for templates, data
+      sources, analysis workbooks, and publish destinations.
+      <code>{PROJECT_ROOT}</code> resolves to the repo root, <code>~</code>
+      resolves to the user's home directory, and
+      <code>{ONEDRIVE_PATH_SEGMENT}</code> / <code>{SCHEDULE_TOOL_FILES_PATH_SEGMENT}</code>
+      resolve based on the <code>use_user_onedrive_path_segment</code> /
+      <code>use_schedule_tool_files_path_segment_host</code> toggles (so the
+      same config can point at a personal or shared OneDrive layout).</li>
+    <li><code>[Update List]</code> — which update sources (<code>OFCI</code>,
+      <code>Weekly_Updates</code>, <code>Auto_Updater</code>) are collected.</li>
+    <li><code>[schedule names]</code> — short file name → full published file
+      name template, used when renaming/routing files to OneDrive and Procore.</li>
+    <li><code>[Fragnets Details]</code> / <code>[Frag Sheet Ranges]</code> /
+      <code>[Frag Log Ranges]</code> — paths and cell ranges for fragnet logging.</li>
+  </ul>
+
+  <p>
+    Filename templates support placeholders like <code>{date_slashes}</code>,
+    <code>{date_dots}</code>, <code>{date_dashes}</code>,
+    <code>{date_swaped}</code>, <code>{date_underscores_yearfirst}</code>, and
+    <code>{data_date}</code>, which are filled in from the date(s) entered in
+    the GUI.
+  </p>
+
+  <p>
+    Config is loaded via <code>app/utilities/get_config.py</code>, which
+    parses <code>config.ini</code> into a typed <code>ConfigOutput</code>
+    dataclass and resolves all path placeholders.
+  </p>
+
+  <h2>Requirements</h2>
+  <ul>
+    <li>Windows with Microsoft Excel installed (COM automation via <code>pywin32</code>).</li>
+    <li>Python 3.13+.</li>
+    <li>See <code>requirements.txt</code> for Python dependencies
+      (<code>nicegui</code>, <code>pywebview</code>, <code>openpyxl</code>,
+      <code>pywin32</code>, <code>pandas</code>, <code>msal</code>, <code>requests</code>).</li>
+  </ul>
+
+  <h2>Notes</h2>
+  <p>
+    This is a personal automation tool tailored to a specific project's file
+    naming conventions and OneDrive/SharePoint folder layout (see
+    <code>config.ini</code>), not a general-purpose scheduling library.
+  </p>
+
+</div>
+</body>
+</html>
